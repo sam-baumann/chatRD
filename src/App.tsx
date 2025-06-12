@@ -48,7 +48,7 @@ function App() {
         <div className="flex-1 overflow-y-auto p-4 w-full">
           {messageList.length == 0 ?
             <div className="h-full flex items-center justify-center">
-              <div className="text-3xl text-center">Start debugging!</div>
+              <div className="text-3xl text-center dark:text-white">Start debugging!</div>
             </div>
             : null}
           {messageList.map((message, index) => {
@@ -62,7 +62,7 @@ function App() {
             )
           })}
           {showPlaceholder ?
-            <div className="text-5xl">...</div>
+            <div className="text-5xl dark:text-white">...</div>
             : null}
           <div ref={messageEndRef} />
         </div>
