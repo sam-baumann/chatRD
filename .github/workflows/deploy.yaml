@@ -20,41 +20,35 @@ concurrency:
   group: 'pages'
   cancel-in-progress: true
 
+
 jobs:
-  # Single deploy job since we're just deploying
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        node-version: [20]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-          cache-dependency-path: ./web
-      - name: install pnpm
-        run: npm install -g pnpm
-      - name: Install dependencies
-        working-directory: ./web
-        run: pnpm install
-      - name: Build
-        working-directory: ./web
-        run: pnpm run build
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          # Upload dist folder
-          path: './dist'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+    - uses: actions/checkout@v4
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 10
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'pnpm'
+    - name: Install dependencies
+      run: pnpm install
+    - name: Build
+      run: pnpm run build
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        # Upload dist folder
+        path: './dist'
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
